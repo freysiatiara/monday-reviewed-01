@@ -15,6 +15,10 @@ REVIEW = (
 
 MAX_CHARS = 200
 
+# Concrete Monday details the review must name at least one of, so the
+# line reads as a review of a real Monday rather than generic tiredness.
+DETAIL_WORDS = ("meeting", "commute", "inbox", "alarm")
+
 
 def resolve_output_path() -> str:
     """Pick the output path: explicit env var first, then the sandbox
@@ -40,6 +44,9 @@ def main() -> None:
         raise SystemExit("review must be a single line")
     if len(text) > MAX_CHARS:
         raise SystemExit("review exceeds 200 characters")
+    lowered = text.lower()
+    if not any(word in lowered for word in DETAIL_WORDS):
+        raise SystemExit("review names no concrete Monday detail")
     path = resolve_output_path()
     directory = os.path.dirname(path)
     if directory:
